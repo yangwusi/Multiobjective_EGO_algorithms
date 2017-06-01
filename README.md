@@ -1,6 +1,6 @@
 # The_expected_improvement_matrix_criteria
 
-1. The multiobjective EGO algorithm using EIM (expected improvement matrix)-based criteria, which is significant cheaper-to-evaluate than the state-of-the-art multiobjective EI criteria. For detailed description about the EIM criteria, please refer to [1].
+1. The multiobjective EGO algorithm using EIM (expected improvement matrix)-based criteria, which is significant cheaper to evaluate than the state-of-the-art multiobjective EI criteria. For detailed description about the EIM criteria, please refer to [1].
 2. The dace toolbox [2] is used for building the Kriging models in the implementations.
 3. The non-dominated sorting method by Yi Cao [3] is used to identify the non-dominated fronts from all the design points
 4. The hypervolume indicators are calculated using the faster algorithm of [4] Nicola Beume et al. (2009).
