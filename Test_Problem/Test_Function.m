@@ -17,9 +17,11 @@ switch name
                 ref_point=2.5*ones(1,num_obj);
             elseif str2double(name(5))==7
                 if num_obj==3
-                    ref_point=20*ones(1,num_obj);
+                    ref_point=30*ones(1,num_obj);
                 elseif num_obj==4
                     ref_point=50*ones(1,num_obj);
+                elseif num_obj==5
+                    ref_point=60*ones(1,num_obj);
                 elseif num_obj==6
                     ref_point=70*ones(1,num_obj);
                 end

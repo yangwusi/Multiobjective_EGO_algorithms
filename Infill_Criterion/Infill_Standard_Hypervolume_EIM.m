@@ -29,7 +29,7 @@ s=sqrt(max(0,mse));
 f_matrix  =  f .* ones(1,1,num_x);
 u_matrix = reshape(u', 1, num_obj, num_x).* ones(num_pareto,1);
 s_matrix =  reshape(s', 1, num_obj, num_x).* ones(num_pareto,1);
-eim_matrix=(f_matrix-u_matrix).*GaussCDF((f_matrix-u_matrix)./s_matrix)+s_matrix.*GaussPDF((f_matrix-u_matrix)./s_matrix);
+eim_matrix=(f_matrix-u_matrix).*Gaussian_CDF((f_matrix-u_matrix)./s_matrix)+s_matrix.*Gaussian_PDF((f_matrix-u_matrix)./s_matrix);
 %-----------------------------------------------------
 %  the Euclidean distance-based EI matrix criterion
 y = reshape(min(prod(r-f+eim_matrix,2)-prod(r-f,2), [], 1), num_x, 1, 1);
