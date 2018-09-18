@@ -1,4 +1,4 @@
-function y=DTLZ7(x,m)
+function y = fun_DTLZ7(x,m)
 % 0<xi<1   i=1,2...6
 % x is a Vector
 

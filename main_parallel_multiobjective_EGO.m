@@ -2,13 +2,13 @@
 % The parallel multiobjective EGO algorithm using PEIM(Pseudo Expected Improvement
 % Matrix) criteria, which is significant cheaper-to-evaluate than the
 % state-of-the-art multiobjective EI criteria. For detailed description
-% about the PEIM and EIM criteria, please refer to [1].
-% The dace toolbox [2] is used for building the Kriging models in the 
+% about the PEIM and EIM criteria, please refer to [1,2].
+% The dace toolbox [3] is used for building the Kriging models in the 
 % implementations.
-% The non-dominated sorting method by Yi Cao [3] is used to identify the
+% The non-dominated sorting method by Yi Cao [4] is used to identify the
 % non-dominated fronts from all the design points
 % The hypervolume indicators are calculated using the faster algorithm of
-% [4] Nicola Beume et al. (2009).
+% [5] Nicola Beume et al. (2009).
 % -----------------------------------------------------------------------------------------
 % [1]  Dawei Zhan, Yuansheng Cheng, Jun Liu, Expected Improvement Matrix-based Infill 
 %      Criteria for Expensive Multiobjective Optimization. IEEE Transactions 
@@ -30,33 +30,43 @@
 % -----------------------------------------------------------------------------------------
 % zhandawei@hust{dot}edu{dot}cn
 % 2018.03.19 initial creation
+% 2018.09.18 update
 % -----------------------------------------------------------------------------------------
 clearvars;close all;
-addpath('dace', 'Infill_Criterion', 'Test_Problem');
 %-------------------------------------------------------------------------
 % settings of the problem
-% infill criterion: 'PEIM_Euclidean','PEIM_Maximin','PEIM_Hypervolume'
-infill_name = 'PEIM_Hypervolume';
-% number of updating points selected in each cycle
-num_q = 5;
 % for ZDT test problems, the number of objectives should be 2
-test_name='DTLZ7';
+fun_name = 'fun_ZDT1';
 % number of objectives
-num_obj = 3;
+num_obj = 2;
 % number of design variables
 num_vari = 6;
+% get the information about the problem
+switch fun_name
+    case {'fun_ZDT1', 'fun_ZDT2', 'fun_ZDT3'}
+        design_space=[zeros(1,num_vari);ones(1,num_vari)]; ref_point = 11*ones(1,2);
+    case {'fun_DTLZ2','fun_DTLZ5'}
+        design_space=[zeros(1,num_vari);ones(1,num_vari)]; ref_point = 2.5*ones(1,num_obj);
+    case 'fun_DTLZ7'
+        design_space=[zeros(1,num_vari);ones(1,num_vari)]; ref_point = (num_obj+1)*10*ones(1,num_obj);
+    otherwise
+        error('objective function is not defined!')
+end
+%-------------------------------------------------------------------------
+% infill criterion: 'PEIM_Euclidean','PEIM_Maximin','PEIM_Hypervolume'
+infill_name = 'PEIM_Euclidean';
 % number of initial design points
-num_initial_sample = 60;
+num_initial_sample = 50;
 % the maximum allowed iterations
 max_iteration = 20;
+% number of updating points selected in each cycle
+num_q = 5;
 %-------------------------------------------------------------------------
-% get the information about the problem
-[design_space, ref_point]=Test_Function(test_name, num_obj, num_vari);
 % the intial design points, points sampled all at once
 sample_x = design_space(1,:)+(design_space(2,:)-design_space(1,:)).*lhsdesign(num_initial_sample,num_vari,'criterion','maximin','iterations',1000);
-sample_y=feval(test_name, sample_x, num_obj);
+sample_y = feval(fun_name, sample_x, num_obj);
 % scale the objectives to [0,1]
-sample_y_scaled=(sample_y-min(sample_y))./(max(sample_y)-min(sample_y));
+sample_y_scaled = (sample_y-min(sample_y))./(max(sample_y)-min(sample_y));
 %-------------------------------------------------------------------------
 % initialize some parameters
 evaluation = size(sample_x,1);
@@ -66,25 +76,28 @@ hypervolume=zeros(max_iteration+1,1);
 options=optimoptions('particleswarm','SwarmSize',100,'MaxIterations',100,'MaxStallIterations',100,'Display','off', 'UseVectorized', true);
 %-------------------------------------------------------------------------
 % calculate the initial hypervolume values and print them on the screen
-indx=Paretoset(sample_y);
-non_dominated_front=sample_y(indx,:);
-non_dominated_front_scaled=sample_y_scaled(indx,:);
+index=Paretoset(sample_y);
+non_dominated_front=sample_y(index,:);
+non_dominated_front_scaled=sample_y_scaled(index,:);
 hypervolume(1)=Hypervolume(non_dominated_front,ref_point);
-fprintf('----------------------------------------------------------------\n')
-fprintf('Test Function               : %s\n',test_name)
-fprintf('Number of objectives        : %d\n',num_obj)
-fprintf('Number of variables         : %d\n',num_vari)
-fprintf('Number of updating points   : %d\n',num_q)
-fprintf('Infill Criterion            : %s\n','Euclidean distance PEIM crtierion')
+% print the hypervolume information
+hypervolume(1) = Hypervolume(non_dominated_front,ref_point);
+% plot current non-dominated front points
+if num_obj == 2
+    scatter(non_dominated_front(:,1), non_dominated_front(:,2),'ro', 'filled');title(sprintf('iteration: %d, evaluations:%d',0,evaluation));drawnow;
+elseif num_obj == 3
+    scatter3(non_dominated_front(:,1), non_dominated_front(:,2),non_dominated_front(:,3),'ro', 'filled');title(sprintf('iteration: %d, evaluations:%d',0,evaluation));drawnow;
+end
+% print the hypervolume information
 fprintf('----------------------------------------------------------------\n')
 fprintf(' iteration: %d, evaluation: %d, hypervolume: %f \n', 0, evaluation, hypervolume(1));
 %-------------------------------------------------------------------------
 % beginning of the iteration
-for iter= 1 : max_iteration
+for iter = 1 : max_iteration
     %-------------------------------------------------------------------------
     % build the initial kriging model for each objective
     for ii=1:num_obj
-        kriging_obj{1,ii}=dacefit(sample_x,sample_y_scaled(:,ii),'regpoly0','corrgauss',1*ones(1,num_vari),0.001*ones(1,num_vari),1000*ones(1,num_vari));
+        kriging_obj{ii} = dacefit(sample_x,sample_y_scaled(:,ii),'regpoly0','corrgauss',1*ones(1,num_vari),0.001*ones(1,num_vari),1000*ones(1,num_vari));
     end
     %-------------------------------------------------------------------------
     % select q updating points use PEIM criterion
@@ -94,11 +107,11 @@ for iter= 1 : max_iteration
         % find the maximum of the pseudo EI function
         switch infill_name
             case 'PEIM_Euclidean'
-                infill_criterion = @(x)Infill_Pseudo_EIM_Euclidean(x, kriging_obj, non_dominated_front_scaled, point_added);
+                infill_criterion = @(x)infill_pseudo_EIM_Euclidean(x, kriging_obj, non_dominated_front_scaled, point_added);
             case 'PEIM_Maximin'
-                infill_criterion = @(x)Infill_Pseudo_EIM_Maximin(x, kriging_obj, non_dominated_front_scaled, point_added);
+                infill_criterion = @(x)infill_pseudo_EIM_Maximin(x, kriging_obj, non_dominated_front_scaled, point_added);
             case 'PEIM_Hypervolume'
-                infill_criterion = @(x)Infill_Pseudo_EIM_Hypervolume(x, kriging_obj, non_dominated_front_scaled, point_added);
+                infill_criterion = @(x)infill_pseudo_EIM_Hypervolume(x, kriging_obj, non_dominated_front_scaled, point_added);
             otherwise
                 error('you should select infill_name from PEIM_Euclidean, PEIM_Maximin, and PEIM_Hypervolume');
         end
@@ -108,30 +121,27 @@ for iter= 1 : max_iteration
             best_x(ii, :)=particleswarm(@(x)Infill_Maximal_Distance(x, [sample_x;point_added]), num_vari, design_space(1,:), design_space(2,:), options);
         end
         % update point_added
-        point_added = [point_added; best_x(ii, :)];
+        point_added =  best_x(1:ii, :);
     end
     %-------------------------------------------------------------------------
     % add the new points to the design set
-    sample_x=[sample_x;best_x];
-    sample_y=[sample_y; feval(test_name,best_x, num_obj)];
-    sample_y_scaled=(sample_y-min(sample_y))./(max(sample_y)-min(sample_y));
-    evaluation=evaluation+size(best_x,1);
+    sample_x = [sample_x;best_x];
+    sample_y = [sample_y; feval(fun_name,best_x, num_obj)];
+    sample_y_scaled = (sample_y-min(sample_y))./(max(sample_y)-min(sample_y));
+    evaluation = evaluation + size(best_x,1);
     %-------------------------------------------------------------------------
     % calculate the hypervolume values and print them on the screen
-    indx=Paretoset(sample_y);
-    non_dominated_front=sample_y(indx,:);
-    non_dominated_front_scaled=sample_y_scaled(indx,:);
-    hypervolume(iter+1)=Hypervolume(non_dominated_front,ref_point);
+    index = Paretoset(sample_y);
+    non_dominated_front = sample_y(index,:);
+    non_dominated_front_scaled = sample_y_scaled(index,:);
+    hypervolume(iter+1) = Hypervolume(non_dominated_front,ref_point);
+    % plot current non-dominated front points
+    if num_obj == 2
+        scatter(non_dominated_front(:,1), non_dominated_front(:,2),'ro', 'filled');title(sprintf('iteration: %d, evaluations:%d',iter,evaluation));drawnow;
+    elseif num_obj == 3
+        scatter3(non_dominated_front(:,1), non_dominated_front(:,2),non_dominated_front(:,3),'ro', 'filled');title(sprintf('iteration: %d, evaluations:%d',iter,evaluation));drawnow;
+    end
+    % print the hypervolume information
     fprintf(' iteration: %d, evaluation: %d, hypervolume: %f\n', iter, evaluation, hypervolume(iter +1));
 end
-%-------------------------------------------------------------------------
-% plot the final approximated pareto front is the number of objective is 2
-% or 3
-figure;
-if num_obj == 2
-    scatter(non_dominated_front(:,1), non_dominated_front(:,2),'ro', 'filled')
-elseif num_obj == 3
-     scatter3(non_dominated_front(:,1), non_dominated_front(:,2),non_dominated_front(:,3),'ro', 'filled')
-end
-%-------------------------------------------------------------------------
 

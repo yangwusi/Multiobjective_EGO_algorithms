@@ -1,4 +1,4 @@
-function obj=Infill_Standard_Hypervolume_EIM(x, kriging_obj, non_dominated_front)
+function obj = infill_standard_Hypervolume_EIM(x, kriging_obj, non_dominated_front)
 %-----------------------------------------------------
 % The criterion is different from the code posted in the paper [1] beacuse
 % I modified it to allow multiple design points be evaluated at the same

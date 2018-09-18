@@ -1,4 +1,4 @@
-function obj=Infill_Pseudo_EIM_Hypervolume(x, kriging_obj, f, point_added)
+function obj = infill_pseudo_EIM_Hypervolume(x, kriging_obj, f, point_added)
 % the criterion is going to be evaluated a large amount of times, so efficiency is very important
 %-----------------------------------------------------
 % number of objectives

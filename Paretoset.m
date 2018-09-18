@@ -1,5 +1,4 @@
-function membership=Paretoset(X)
-
+function membership = Paretoset(X)
 % PARETOSET  To get the Pareto set from a given set of points.
 % synopsis:           membership =paretoset (objectiveMatrix)
 % where:

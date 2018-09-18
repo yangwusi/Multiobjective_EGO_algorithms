@@ -1,4 +1,4 @@
-function obj=Infill_Standard_Euclidean_EIM(x, kriging_obj, non_dominated_front)
+function obj = infill_standard_Maximin_EIM(x, kriging_obj, non_dominated_front)
 %-----------------------------------------------------
 % The criterion is different from the code posted in the paper [1] beacuse
 % I modified it to allow multiple design points be evaluated at the same
@@ -32,8 +32,12 @@ s_matrix =  reshape(s', 1, num_obj, num_x).* ones(num_pareto,1);
 eim_matrix=(f_matrix-u_matrix).*Gaussian_CDF((f_matrix-u_matrix)./s_matrix)+s_matrix.*Gaussian_PDF((f_matrix-u_matrix)./s_matrix);
 %-----------------------------------------------------
 %  the Euclidean distance-based EI matrix criterion
-y = reshape(min(sqrt(sum(eim_matrix.^2,2)), [], 1), num_x, 1, 1);
+y = reshape(min(max(eim_matrix, [], 2), [], 1), num_x, 1, 1);
 %-----------------------------------------------------
 % the objective is maximized
 obj=-y;
 end
+
+
+
+
