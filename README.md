@@ -2,9 +2,9 @@
 
 1. The multiobjective EGO algorithm using EIM (expected improvement matrix) criteria, which is significant cheaper to evaluate than the state-of-the-art multiobjective EI criteria. For detailed description about the EIM criteria, please refer to [1].
 2. The parallel multiobjective EGO algorithm using PEIM (Pseudo Expected Improvement Matrix) criteria, which is able to select multiple candidates in each cycle to evaluate in parallel [2].
-3. The dace toolbox [2] is used for building the Kriging models in the implementations.
-4. The non-dominated sorting method by Yi Cao [3] is used to identify the non-dominated fronts from all the design points
-5. The hypervolume indicators are calculated using the faster algorithm of [4] Nicola Beume et al. (2009).
+3. The dace toolbox [3] is used for building the Kriging models in the implementations.
+4. The non-dominated sorting method by Yi Cao [4] is used to identify the non-dominated fronts from all the design points
+5. The hypervolume indicators are calculated using the faster algorithm of [5] Nicola Beume et al. (2009).
 6. You need MATLAB 2016b or newer version and the global optimization toolbox to run the codes.
 
 ### Reference
