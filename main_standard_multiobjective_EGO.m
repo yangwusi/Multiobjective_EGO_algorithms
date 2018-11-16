@@ -50,7 +50,7 @@ switch fun_name
 end
 %-------------------------------------------------------------------------
 % infill criterion: 'EIM_Euclidean','EIM_Maximin','EIM_Hypervolume'
-infill_name= 'EIM_Euclidean';
+infill_name= 'EIM_Maximin';
 % number of initial design points
 num_initial_sample = 50;
 % the maximum allowed iterations
