@@ -5,7 +5,7 @@
 3. The dace toolbox [3] is used for building the Kriging models in the implementations.
 4. The non-dominated sorting method by Yi Cao [4] is used to identify the non-dominated fronts from all the design points
 5. The hypervolume indicators are calculated using the faster algorithm of [5] Nicola Beume et al. (2009).
-6. Both the EIM and PEIM criteria are maximized by DE [6] algorithm..
+6. Both the EIM and PEIM criteria are maximized by DE [6] algorithm.
 
 ### Reference
 
