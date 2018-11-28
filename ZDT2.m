@@ -1,4 +1,4 @@
-function y = fun_ZDT2(x, m)
+function y = ZDT2(x, m)
 % 0<xi<1
 
 y(:,1)=x(:,1);
