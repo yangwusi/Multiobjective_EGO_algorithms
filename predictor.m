@@ -27,11 +27,11 @@ function  [y,mse] = predictor(x, dmodel)
 [m,n] = size(dmodel.S);  % number of design sites and number of dimensions
 mx = size(x,1);                    % number of trial sites and their dimension
 % normalize trial sites
-x = (x - dmodel.Ssc(1,:))./dmodel.Ssc(2,:);
+x = (x - repmat(dmodel.Ssc(1,:),mx,1))./repmat(dmodel.Ssc(2,:),mx,1);
 %  get distances to design sites
 dx = zeros(mx*m,n);  kk = 1:m;
 for  k = 1 : mx
-    dx(kk,:) = x(k,:) - dmodel.S;
+    dx(kk,:) = repmat(x(k,:),size(dmodel.S,1),1) - dmodel.S;
     kk = kk + m;
 end
 

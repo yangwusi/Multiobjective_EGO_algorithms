@@ -100,7 +100,7 @@ end
 % Initialize population and some arrays
 % pop is a matrix of size NPxD. It will be initialized with random
 % values between the min and max values of the parameters
-pop= XVmin + rand(NP,D).*(XVmax - XVmin);
+pop= repmat(XVmin,NP,1) + rand(NP,D).*repmat(XVmax - XVmin,NP,1);
 % create and reset the "cost array"
 val       = zeros(1,NP);
 % number of function evaluations

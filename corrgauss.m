@@ -24,7 +24,7 @@ function  [r, dr] = corrgauss(theta, d)
 % zhandawei@hust.edu.cn
 
 [m, n] = size(d);  % number of differences and dimension of data
-td = d.^2 .* (-theta(:)');
+td = d.^2 .* (repmat(-theta(:)',m,1));
 r = exp(sum(td, 2));
 
 if  nargout > 1

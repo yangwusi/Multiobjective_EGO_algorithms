@@ -36,7 +36,7 @@
 clearvars;close all;
 % settings of the problem
 % for ZDT test problems, the number of objectives should be 2
-fun_name = 'DTLZ7';
+fun_name = 'ZDT1';
 % number of objectives
 num_obj = 2;
 % number of design variables
@@ -54,22 +54,22 @@ switch fun_name
 end
 %-------------------------------------------------------------------------
 % infill criterion: 'EIM_Euclidean','EIM_Maximin','EIM_Hypervolume'
-infill_name= 'EIM_Euclidean';
+infill_name= 'EIM_Hypervolume';
 % number of initial design points
-num_initial_sample = 100;
+num_initial = 100;
 % the maximum allowed evaluations
 max_evaluation = 200;
 %-------------------------------------------------------------------------
 % the intial design points, points sampled all at once
-sample_x = design_space(1,:) + (design_space(2,:)-design_space(1,:)).*lhsdesign(num_initial_sample,num_vari,'criterion','maximin','iterations',1000);
+sample_x = repmat(design_space(1,:),num_initial,1) + repmat(design_space(2,:)-design_space(1,:),num_initial,1).*lhsdesign(num_initial,num_vari,'criterion','maximin','iterations',1000);
 sample_y = feval(fun_name, sample_x, num_obj);
 % scale the objectives to [0,1]
-sample_y_scaled =(sample_y-min(sample_y))./(max(sample_y)-min(sample_y));
+sample_y_scaled =(sample_y - repmat(min(sample_y),size(sample_y,1),1))./repmat(max(sample_y)-min(sample_y),size(sample_y,1),1);
 %-------------------------------------------------------------------------
 % initialize some parameters
 evaluation = size(sample_x,1);
 kriging_obj = cell(1,num_obj);
-hypervolume = zeros(max_evaluation-num_initial_sample+1,1);
+hypervolume = zeros(max_evaluation-num_initial+1,1);
 iteration = 0;
 %-------------------------------------------------------------------------
 % update the non-dominated front
@@ -97,19 +97,19 @@ while evaluation < max_evaluation
     % select updating points using the EIM criteria
     switch infill_name
         case 'EIM_Euclidean'
-            infill_criterion = @(x)infill_standard_Euclidean_EIM(x, kriging_obj, non_dominated_front_scaled);
+            infill_criterion = @(x)Infill_Standard_EIM_Euclidean(x, kriging_obj, non_dominated_front_scaled);
         case 'EIM_Maximin'
-            infill_criterion = @(x)infill_standard_Maximin_EIM(x, kriging_obj, non_dominated_front_scaled);
+            infill_criterion = @(x)Infill_Standard_EIM_Maximin(x, kriging_obj, non_dominated_front_scaled);
         case 'EIM_Hypervolume'
-            infill_criterion = @(x)infill_standard_Hypervolume_EIM(x, kriging_obj, non_dominated_front_scaled);
+            infill_criterion = @(x)Infill_Standard_EIM_Hypervolume(x, kriging_obj, non_dominated_front_scaled);
         otherwise
             error('you should select infill_name from EIM_Euclidean, EIM_Maximin, and EIM_Hypervolume');
     end
     best_x = DE(infill_criterion, num_vari, design_space(1,:), design_space(2,:), 50, 200);
     % add the new points to the design set
-    sample_x=[sample_x;best_x];
-    sample_y=[sample_y; feval(fun_name,best_x, num_obj)];
-    sample_y_scaled=(sample_y-min(sample_y))./(max(sample_y)-min(sample_y));
+    sample_x = [sample_x;best_x];
+    sample_y = [sample_y; feval(fun_name,best_x, num_obj)];
+    sample_y_scaled = (sample_y - repmat(min(sample_y),size(sample_y,1),1))./repmat(max(sample_y)-min(sample_y),size(sample_y,1),1);
     evaluation = evaluation + size(best_x,1);
     iteration = iteration + 1;
     % update the non-dominated front
