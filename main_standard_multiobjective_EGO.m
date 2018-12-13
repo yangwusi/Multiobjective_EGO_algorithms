@@ -36,11 +36,19 @@
 clearvars;close all;
 % settings of the problem
 % for ZDT test problems, the number of objectives should be 2
-fun_name = 'ZDT1';
+fun_name = 'DTLZ2';
 % number of objectives
 num_obj = 2;
 % number of design variables
 num_vari = 6;
+% infill criterion: 'EIM_Euclidean','EIM_Maximin','EIM_Hypervolume'
+infill_name= 'EIM_Hypervolume';
+%-------------------------------------------------------------------------
+% number of initial design points
+num_initial = 100;
+% the maximum allowed evaluations
+max_evaluation = 200;
+%-------------------------------------------------------------------------
 % get the information about the problem
 switch fun_name
     case {'ZDT1', 'ZDT2', 'ZDT3'}
@@ -52,13 +60,6 @@ switch fun_name
     otherwise
         error('objective function is not defined!')
 end
-%-------------------------------------------------------------------------
-% infill criterion: 'EIM_Euclidean','EIM_Maximin','EIM_Hypervolume'
-infill_name= 'EIM_Hypervolume';
-% number of initial design points
-num_initial = 100;
-% the maximum allowed evaluations
-max_evaluation = 200;
 %-------------------------------------------------------------------------
 % the intial design points, points sampled all at once
 sample_x = repmat(design_space(1,:),num_initial,1) + repmat(design_space(2,:)-design_space(1,:),num_initial,1).*lhsdesign(num_initial,num_vari,'criterion','maximin','iterations',1000);

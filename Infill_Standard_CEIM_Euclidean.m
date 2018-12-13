@@ -1,4 +1,4 @@
-function obj = Infill_Standard_EIM_Euclidean(x, kriging_obj, non_dominated_front)
+function obj = Infill_Standard_CEIM_Euclidean(x, kriging_obj, kriging_con, non_dominated_front)
 %-----------------------------------------------------
 % [1]  D. Zhan, Y. Cheng, J. Liu, Expected Improvement Matrix-based Infill 
 % Criteria for Expensive Multiobjective Optimization, IEEE Transactions 
@@ -27,7 +27,19 @@ for ii = 1 : num_x
     EIM = (f - u_matrix).*Gaussian_CDF((f - u_matrix)./s_matrix) + s_matrix.*Gaussian_PDF((f - u_matrix)./s_matrix);
    y(ii) = min(sqrt(sum(EIM.^2,2)));
 end
+%---------------------------------------------------
+% the number of constraints
+num_con = length(kriging_con);
+% the kriging prediction and varince
+u_g = zeros(size(x,1), num_con);
+mse_g = zeros(size(x,1), num_con);
+for ii = 1: num_con
+    [u_g(:, ii), mse_g(:, ii)] = predictor(x, kriging_con{ii});
+end
+s_g = sqrt(max(0,mse_g));
+% the PoF value
+PoF = prod(Gaussian_CDF((0-u_g)./s_g), 2);
 %-----------------------------------------------------
 % the objective is maximized
-obj = -y;
+obj = -y.*PoF;
 end

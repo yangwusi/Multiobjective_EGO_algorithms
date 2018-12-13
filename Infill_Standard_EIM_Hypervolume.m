@@ -1,9 +1,5 @@
 function obj = Infill_Standard_EIM_Hypervolume(x, kriging_obj, non_dominated_front)
 %-----------------------------------------------------
-% The criterion is different from the code posted in the paper [1] beacuse
-% I modified it to allow multiple design points be evaluated at the same
-% time by using matrix opreation. Since the criterion is going to be evaluated
-% a large amount of times,  efficiency is very important.
 % [1]  D. Zhan, Y. Cheng, J. Liu, Expected Improvement Matrix-based Infill
 % Criteria for Expensive Multiobjective Optimization, IEEE Transactions
 % on Evolutionary Computation, DOI: 10.1109/TEVC.2017.2697503
