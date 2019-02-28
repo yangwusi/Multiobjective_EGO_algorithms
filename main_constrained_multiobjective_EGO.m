@@ -26,7 +26,7 @@
 %     a practical approach to global optimization: Springer Science & Business Media, 2006.
 %     http://www.icsi.berkeley.edu/~storn/code.html
 % -----------------------------------------------------------------------------------------
-% zhandawei@hust{dot}edu{dot}cn
+% zhandawei@swjtu{dot}edu{dot}cn
 % 2018.12.13 initial creation
 % -----------------------------------------------------------------------------------------
 clearvars;close all;

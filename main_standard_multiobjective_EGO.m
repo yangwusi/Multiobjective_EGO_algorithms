@@ -27,7 +27,7 @@
 %     a practical approach to global optimization: Springer Science & Business Media, 2006.
 %     http://www.icsi.berkeley.edu/~storn/code.html
 % -----------------------------------------------------------------------------------------
-% zhandawei@hust{dot}edu{dot}cn
+% zhandawei@swjtu{dot}edu{dot}cn
 % 2017.05.03 initial creation
 % 2018.03.19 update
 % 2018.09.18 update
@@ -38,16 +38,16 @@ clearvars;close all;
 % for ZDT test problems, the number of objectives should be 2
 fun_name = 'DTLZ2';
 % number of objectives
-num_obj = 2;
+num_obj = 3;
 % number of design variables
 num_vari = 6;
 % infill criterion: 'EIM_Euclidean','EIM_Maximin','EIM_Hypervolume'
-infill_name= 'EIM_Hypervolume';
+infill_name= 'EIM_Euclidean';
 %-------------------------------------------------------------------------
 % number of initial design points
 num_initial = 100;
 % the maximum allowed evaluations
-max_evaluation = 200;
+max_evaluation = 300;
 %-------------------------------------------------------------------------
 % get the information about the problem
 switch fun_name

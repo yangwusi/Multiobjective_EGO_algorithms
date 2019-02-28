@@ -32,7 +32,7 @@
 %     a practical approach to global optimization: Springer Science & Business Media, 2006.
 %     http://www.icsi.berkeley.edu/~storn/code.html
 % -----------------------------------------------------------------------------------------
-% zhandawei@hust{dot}edu{dot}cn
+% zhandawei@swjtu{dot}edu{dot}cn
 % 2018.03.19 initial creation
 % 2018.09.18 update
 % 2018.11.28  use DE optimizer for finding PEIM maximum
