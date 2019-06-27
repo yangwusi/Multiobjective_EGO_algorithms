@@ -41,11 +41,11 @@ clearvars;close all;
 %-------------------------------------------------------------------------
 % settings of the problem
 % for ZDT test problems, the number of objectives should be 2
-fun_name = 'ZDT2';
+fun_name = 'DTLZ2';
 % number of objectives
 num_obj = 2;
 % number of design variables
-num_vari = 6;
+num_vari = 10;
 % get the information about the problem
 switch fun_name
     case {'ZDT1', 'ZDT2', 'ZDT3'}
@@ -61,7 +61,7 @@ end
 % infill criterion: 'PEIM_Euclidean','PEIM_Maximin','PEIM_Hypervolume'
 infill_name = 'PEIM_Euclidean';
 % number of initial design points
-num_initial = 100;
+num_initial = 11*num_vari-1;
 % the maximum allowed iterations
 max_evaluation = 200;
 % number of updating points selected in each cycle

@@ -34,20 +34,21 @@
 % 2018.11.28  use DE optimizer for finding EIM maximum
 % -----------------------------------------------------------------------------------------
 clearvars;close all;
+tic
 % settings of the problem
 % for ZDT test problems, the number of objectives should be 2
 fun_name = 'DTLZ2';
 % number of objectives
-num_obj = 3;
+num_obj = 2;
 % number of design variables
-num_vari = 6;
+num_vari = 10;
 % infill criterion: 'EIM_Euclidean','EIM_Maximin','EIM_Hypervolume'
 infill_name= 'EIM_Euclidean';
 %-------------------------------------------------------------------------
 % number of initial design points
-num_initial = 100;
+num_initial = 11*num_vari-1;
 % the maximum allowed evaluations
-max_evaluation = 300;
+max_evaluation = 200;
 %-------------------------------------------------------------------------
 % get the information about the problem
 switch fun_name
@@ -128,3 +129,4 @@ while evaluation < max_evaluation
     % print the hypervolume information
     fprintf(' iteration: %d, evaluation: %d, hypervolume: %f\n', iteration, evaluation, hypervolume(iteration +1));
 end
+toc
