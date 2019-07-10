@@ -1,8 +1,5 @@
-function obj = Infill_Standard_CEIM_Hypervolume(x, kriging_obj, kriging_con, f)
-%-----------------------------------------------------
-% [1]  D. Zhan, Y. Cheng, J. Liu, Expected Improvement Matrix-based Infill
-% Criteria for Expensive Multiobjective Optimization, IEEE Transactions
-% on Evolutionary Computation, DOI: 10.1109/TEVC.2017.2697503
+function obj = Infill_Pseudo_CEIM_Hypervolume(x, kriging_obj, kriging_con, f, point_added)
+% the criterion is going to be evaluated a large amount of times, so efficiency is very important
 %-----------------------------------------------------
 % number of objectives
 [num_pareto,num_obj] = size(f);
@@ -14,7 +11,7 @@ y = zeros(num_x,1);
 % the kriging prediction and varince
 u = zeros(num_x,num_obj);
 mse = zeros(num_x,num_obj);
-for ii = 1:num_obj
+for ii=1:num_obj
     [u(:, ii),mse(:, ii)] = predictor(x, kriging_obj{ii});
 end
 s = sqrt(max(0,mse));
@@ -22,9 +19,24 @@ s = sqrt(max(0,mse));
 r_matrix = repmat(r,num_pareto,1);
 for ii = 1 : num_x
     u_matrix = repmat(u(ii,:),num_pareto,1);
-    s_matrix = repmat(s(ii,:),num_pareto,1);    
+    s_matrix = repmat(s(ii,:),num_pareto,1);
     EIM = (f - u_matrix).*Gaussian_CDF((f - u_matrix)./s_matrix) + s_matrix.*Gaussian_PDF((f - u_matrix)./s_matrix);
-    y(ii) =  min(prod(r_matrix - f + EIM,2) - prod(r_matrix - f,2));
+    % if this is the first infill point
+    if ~isempty(point_added)
+        num_added = size(point_added,1);
+        correlation = zeros(num_added, num_obj);
+        % the scaling of x is the same for different objectives
+        scaled_x = (x(ii,:) - kriging_obj{1}.Ssc(1,:)) ./ kriging_obj{1}.Ssc(2,:);
+        scaled_point_added = (point_added - repmat(kriging_obj{1}.Ssc(1,:),size(point_added,1),1)) ./ repmat(kriging_obj{1}.Ssc(2,:),size(point_added,1),1);
+        dx = repmat(scaled_x,num_added,1) - scaled_point_added;
+        % calculate the correlation
+        for jj = 1:num_obj
+            correlation(:,jj)  = feval(kriging_obj{jj}.corr, kriging_obj{jj}.theta, dx);
+        end
+        % the Pseudo EI matrix
+        EIM = EIM.*repmat(prod(1-correlation,1),num_pareto,1);
+    end
+   y(ii) = min(prod(r_matrix - f + EIM,2) - prod(r_matrix - f,2));
 end
 %---------------------------------------------------
 % the number of constraints

@@ -44,9 +44,8 @@ num_obj = 2;
 num_vari = 10;
 % infill criterion: 'EIM_Euclidean','EIM_Maximin','EIM_Hypervolume'
 infill_name= 'EIM_Euclidean';
-%-------------------------------------------------------------------------
 % number of initial design points
-num_initial = 11*num_vari-1;
+num_initial = 100;
 % the maximum allowed evaluations
 max_evaluation = 200;
 %-------------------------------------------------------------------------

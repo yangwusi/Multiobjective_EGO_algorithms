@@ -46,6 +46,15 @@ fun_name = 'DTLZ2';
 num_obj = 2;
 % number of design variables
 num_vari = 10;
+% infill criterion: 'PEIM_Euclidean','PEIM_Maximin','PEIM_Hypervolume'
+infill_name = 'PEIM_Euclidean';
+% number of initial design points
+num_initial = 100;
+% the maximum allowed iterations
+max_evaluation = 200;
+% number of updating points selected in each cycle
+num_q = 5;
+%-------------------------------------------------------------------------
 % get the information about the problem
 switch fun_name
     case {'ZDT1', 'ZDT2', 'ZDT3'}
@@ -58,15 +67,6 @@ switch fun_name
         error('objective function is not defined!')
 end
 %-------------------------------------------------------------------------
-% infill criterion: 'PEIM_Euclidean','PEIM_Maximin','PEIM_Hypervolume'
-infill_name = 'PEIM_Euclidean';
-% number of initial design points
-num_initial = 11*num_vari-1;
-% the maximum allowed iterations
-max_evaluation = 200;
-% number of updating points selected in each cycle
-num_q = 5;
-%-------------------------------------------------------------------------
 % the intial design points, points sampled all at once
 sample_x = repmat(design_space(1,:),num_initial,1) + repmat(design_space(2,:)-design_space(1,:),num_initial,1).*lhsdesign(num_initial,num_vari,'criterion','maximin','iterations',1000);
 sample_y = feval(fun_name, sample_x, num_obj);
@@ -75,8 +75,8 @@ sample_y_scaled =(sample_y - repmat(min(sample_y),size(sample_y,1),1))./repmat(m
 %-------------------------------------------------------------------------
 % initialize some parameters
 evaluation = size(sample_x,1);
-kriging_obj=cell(1,num_obj);
-hypervolume=zeros(ceil((max_evaluation-num_initial)/num_q)+1,1);
+kriging_obj = cell(1,num_obj);
+hypervolume = zeros(ceil((max_evaluation-num_initial)/num_q)+1,1);
 iteration = 0;
 %-------------------------------------------------------------------------
 % calculate the initial hypervolume values and print them on the screen
