@@ -1,12 +1,13 @@
 # The standard, constrained and parallel multiobjective EGO algorithm
 
-1. **main_standard_multiobjective_EGO.m**: The unconstrained multiobjective EGO algorithm using EIM (expected improvement matrix) criteria, which is significant cheaper to evaluate than the state-of-the-art multiobjective EI criteria. For detailed description about the EIM criteria, please refer to [1].
-2. **main_constrained_multiobjective_EGO.m**: The constrained multiobjective EGO algorithm using CEIM (constrained expected improvement matrix) criteria to solve expensive constrained multiobjective problems.
-3. **main_parallel_multiobjective_EGO.m**: The parallel multiobjective EGO algorithm using PEIM (Pseudo Expected Improvement Matrix) criteria, which is able to select multiple candidates in each cycle to evaluate in parallel [2].
-4. The dace toolbox [3] is used for building the Kriging models in the implementations.
-5. The non-dominated sorting method by Yi Cao [4] is used to identify the non-dominated fronts from all the design points
-6. The hypervolume indicators are calculated using the faster algorithm of [5] Nicola Beume et al. (2009).
-7. Both the EIM and PEIM criteria are maximized by DE [6] algorithm.
+1. **Main_Standard_Multiobjective_EGO.m**: The unconstrained multiobjective EGO algorithm using EIM (expected improvement matrix) criteria, which is significant cheaper to evaluate than the state-of-the-art multiobjective EI criteria. For detailed description about the EIM criteria, please refer to [1].
+2. **Main_Constrained_Multiobjective_EGO.m**: The constrained multiobjective EGO algorithm using CEIM (constrained expected improvement matrix) criteria to solve expensive constrained multiobjective problems.
+3. **Main_Parallel_Multiobjective_EGO.m**: The parallel multiobjective EGO algorithm using PEIM (Pseudo Expected Improvement Matrix) criteria, which is able to select multiple candidates in each cycle to evaluate in parallel [2].
+4. **Main_Parallel_Constrained_Multiobjective_EGO.m**: The parallel constrained multiobjective EGO algorithm using PCEIM (Pseudo Constrained Expected Improvement Matrix) criteria, which is able to select multiple candidates in each cycle to evaluate in parallel [2].
+5. The dace toolbox [3] is used for building the Kriging models in the implementations.
+6. The non-dominated sorting method by Yi Cao [4] is used to identify the non-dominated fronts from all the design points
+7. The hypervolume indicators are calculated using the faster algorithm of [5] Nicola Beume et al. (2009).
+8. Both the EIM and PEIM criteria are maximized by DE [6] algorithm.
 
 ### Reference
 
