@@ -1,4 +1,3 @@
-% -----------------------------------------------------------------------------------------
 % 1. The parallel multiobjective EGO algorithm using PEIM(Pseudo Expected Improvement
 %    Matrix) criteria, which is significant cheaper-to-evaluate than the
 %    state-of-the-art multiobjective EI criteria. For detailed description
@@ -10,7 +9,6 @@
 % 4. The hypervolume indicators are calculated using the faster algorithm of
 %    [5] Nicola Beume et al. (2009).
 % 5. The EIM criteria are maximized by DE [6] algorithm.
-% -----------------------------------------------------------------------------------------
 % [1]  Dawei Zhan, Yuansheng Cheng, Jun Liu, Expected Improvement Matrix-based Infill 
 %      Criteria for Expensive Multiobjective Optimization. IEEE Transactions 
 %      on Evolutionary Computation, 2017, 21 (6): 956-975.
@@ -31,14 +29,12 @@
 % [6] K. Price, R. M. Storn, and J. A. Lampinen, Differential evolution: 
 %     a practical approach to global optimization: Springer Science & Business Media, 2006.
 %     http://www.icsi.berkeley.edu/~storn/code.html
-% -----------------------------------------------------------------------------------------
 % zhandawei@swjtu{dot}edu{dot}cn
 % 2018.03.19 initial creation
 % 2018.09.18 update
 % 2018.11.28  use DE optimizer for finding PEIM maximum
 % -----------------------------------------------------------------------------------------
 clearvars;close all;
-%-------------------------------------------------------------------------
 % settings of the problem
 % for ZDT test problems, the number of objectives should be 2
 fun_name = 'DTLZ2';
@@ -54,7 +50,6 @@ num_initial = 100;
 max_evaluation = 200;
 % number of updating points selected in each cycle
 num_q = 5;
-%-------------------------------------------------------------------------
 % get the information about the problem
 switch fun_name
     case {'ZDT1', 'ZDT2', 'ZDT3'}
@@ -66,19 +61,16 @@ switch fun_name
     otherwise
         error('objective function is not defined!')
 end
-%-------------------------------------------------------------------------
 % the intial design points, points sampled all at once
-sample_x = repmat(design_space(1,:),num_initial,1) + repmat(design_space(2,:)-design_space(1,:),num_initial,1).*lhsdesign(num_initial,num_vari,'criterion','maximin','iterations',1000);
+sample_x = repmat(design_space(1,:),num_initial,1) +  repmat(design_space(2,:)-design_space(1,:),num_initial,1).*lhsdesign(num_initial,num_vari,'criterion','maximin','iterations',1000);
 sample_y = feval(fun_name, sample_x, num_obj);
 % scale the objectives to [0,1]
 sample_y_scaled =(sample_y - repmat(min(sample_y),size(sample_y,1),1))./repmat(max(sample_y)-min(sample_y),size(sample_y,1),1);
-%-------------------------------------------------------------------------
 % initialize some parameters
 evaluation = size(sample_x,1);
 kriging_obj = cell(1,num_obj);
 hypervolume = zeros(ceil((max_evaluation-num_initial)/num_q)+1,1);
 iteration = 0;
-%-------------------------------------------------------------------------
 % calculate the initial hypervolume values and print them on the screen
 index = Paretoset(sample_y);
 non_dominated_front = sample_y(index,:);
@@ -86,12 +78,13 @@ non_dominated_front_scaled = sample_y_scaled(index,:);
 hypervolume(1) = Hypervolume(non_dominated_front,ref_point);
 % plot current non-dominated front points
 if num_obj == 2
-    scatter(non_dominated_front(:,1), non_dominated_front(:,2),'ro', 'filled');title(sprintf('iteration: %d, evaluations:%d',0,evaluation));drawnow;
+    scatter(non_dominated_front(:,1), non_dominated_front(:,2),'ro', 'filled');
+    title(sprintf('iteration: %d, evaluations:%d',0,evaluation));drawnow;
 elseif num_obj == 3
-    scatter3(non_dominated_front(:,1), non_dominated_front(:,2),non_dominated_front(:,3),'ro', 'filled');title(sprintf('iteration: %d, evaluations:%d',0,evaluation));drawnow;
+    scatter3(non_dominated_front(:,1), non_dominated_front(:,2),non_dominated_front(:,3),'ro', 'filled');
+    title(sprintf('iteration: %d, evaluations:%d',0,evaluation));drawnow;
 end
 % print the hypervolume information
-fprintf('----------------------------------------------------------------\n')
 fprintf(' iteration: %d, evaluation: %d, hypervolume: %f \n', iteration, evaluation, hypervolume(1));
 %-------------------------------------------------------------------------
 % beginning of the iteration
@@ -137,9 +130,11 @@ while evaluation <  max_evaluation
     hypervolume(iteration+1) = Hypervolume(non_dominated_front,ref_point);
     % plot current non-dominated front points
     if num_obj == 2
-        scatter(non_dominated_front(:,1), non_dominated_front(:,2),'ro', 'filled');title(sprintf('iteration: %d, evaluations:%d',iteration,evaluation));drawnow;
+        scatter(non_dominated_front(:,1), non_dominated_front(:,2),'ro', 'filled');
+        title(sprintf('iteration: %d, evaluations:%d',iteration,evaluation));drawnow;
     elseif num_obj == 3
-        scatter3(non_dominated_front(:,1), non_dominated_front(:,2),non_dominated_front(:,3),'ro', 'filled');title(sprintf('iteration: %d, evaluations:%d',iteration,evaluation));drawnow;
+        scatter3(non_dominated_front(:,1), non_dominated_front(:,2),non_dominated_front(:,3),'ro', 'filled');
+        title(sprintf('iteration: %d, evaluations:%d',iteration,evaluation));drawnow;
     end
     % print the hypervolume information
     fprintf(' iteration: %d, evaluation: %d, hypervolume: %f\n', iteration, evaluation, hypervolume(iteration +1));
